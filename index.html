@@ -1,25 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="km">
 <head>
-  <title>Camera</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>បើកកាមេរ៉ាតាម Link</title>
+    <style>
+        body { 
+            display: flex; flex-direction: column; align-items: center; 
+            justify-content: center; height: 100vh; margin: 0;
+            background-color: #1a1a1a; color: white; font-family: 'Khmer OS Battambang', sans-serif;
+        }
+        video {
+            width: 90%; max-width: 500px;
+            border-radius: 15px; border: 4px solid #00ff00;
+            background: black;
+            transform: scaleX(-1); /* បញ្ច្រាសកាមេរ៉ាឱ្យដូចកញ្ចក់ */
+        }
+        .info { margin-bottom: 20px; font-size: 1.2rem; }
+    </style>
 </head>
 <body>
 
-<h2>Open Camera</h2>
-<video id="video" width="300" autoplay></video>
+    <div class="info" id="status">កំពុងស្នើសុំបើកកាមេរ៉ា...</div>
+    <video id="webcam" autoplay playsinline></video>
 
-<script>
-async function startCamera() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-    document.getElementById('video').srcObject = stream;
-  } catch (err) {
-    alert("Camera error!");
-  }
-}
+    <script>
+        async function startCamera() {
+            const videoElement = document.getElementById('webcam');
+            const statusText = document.getElementById('status');
 
-startCamera();
-</script>
+            try {
+                // កូដបញ្ជាឱ្យ Browser សួរ Permission បើកកាមេរ៉ា
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "user" }, // "user" សម្រាប់កាមេរ៉ាមុខ
+                    audio: false 
+                });
+                
+                videoElement.srcObject = stream;
+                statusText.innerText = "កាមេរ៉ាកំពុងដំណើរការ ✅";
+                statusText.style.color = "#00ff00";
+            } catch (err) {
+                console.error("កំហុសក្នុងការបើកកាមេរ៉ា: ", err);
+                statusText.innerText = "សូមចុច 'Allow' ដើម្បីបើកកាមេរ៉ា ❌";
+                statusText.style.color = "#ff4444";
+            }
+        }
 
+        // ដំណើរការកូដភ្លាមៗនៅពេល Load ទំព័រវេបសាយរួចរាល់
+        window.onload = startCamera;
+    </script>
 </body>
 </html>
